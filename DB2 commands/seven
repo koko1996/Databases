@@ -1,0 +1,9 @@
+/*  Find the books which are only offered by nine clubs.
+	Show the title and the year*/
+	
+	
+SELECT b.title, b.year 
+FROM yrb_book b, yrb_offer o1 
+WHERE b.title=o1.title and b.year = o1.year 
+GROUP BY b.title, b.year 
+HAVING count(*)=9;

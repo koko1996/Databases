@@ -1,0 +1,11 @@
+/*  Select the books, which are more expensive than the average price (across all clubs) of the most expensive books (for each club) written in English. If a club doesn't have books written in English, do not count.
+	Show the title, the year and the price of the book*/
+	
+	
+ SELECT bb.title, bb.year , bb.price 
+ FROM yrb_offer bb 
+ WHERE bb.price > ALL (select avg(temp.price) 
+					   from (select max(price) price 
+							 from yrb_book b, yrb_offer o 
+							 where b.title=o.title and b.year = o.year and b.LANGUAGE='English'  
+							 group by o.club ) as temp);

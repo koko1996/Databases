@@ -1,0 +1,6 @@
+/*  Select distinct customers (by name) who buy books from club(s) whose name have 'A' as the second letter  */
+
+
+SELECT distinct name 
+FROM yrb_customer c, yrb_purchase p 
+WHERE p.cid =c.cid and p.club like '_A%';

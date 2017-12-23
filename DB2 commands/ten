@@ -1,0 +1,38 @@
+/*  Suppose all the books shipped to a customer purchased **in one club** made on the same **day** are shipped as one package. If the total price of one package is higher than (or equal to) 50 dollars, it's post-free. Otherwise, postage is extra.
+	For each customer, find the package that costs him the most.	
+	Show customers's cid, the day of the package and the cost, order by cid*/
+	
+	
+SELECT ff.cid , ff.day , ff.price as cost 
+FROM ( 
+	   select q.cid , q.day, q.price  + ( select min(s.cost) 
+										  from yrb_shipping s 
+										  where s.weight>= q.weight ) as price 
+	   from ( select k.cid as cid, k.day,k.price, k.weight 
+			 from( select t.cid as cid, t.day, sum(t.price) as price, sum(t.weight) as weight 
+				   from ( select p1.cid, date(p1.when) as day, o1.club, price * qnty as price, WEIght*qnty as weigHt 
+						  from yrb_purchase p1, yrb_book b1, yrb_offer o1 
+						  where b1.title=o1.title and b1.year = o1.year and o1.club = p1.club and o1.title=p1.title and o1.year = p1.year) as t 
+				   group by t.cid, t.club, t.day) as k ) as q 
+	   where q.price <50 
+
+		 union
+
+	   select qq.cid , qq.day, qq.price 
+	   from ( select kk.cid as cid, kk.day,kk.price, kk.weight 
+			  from( select tt.cid as cid, tt.day, sum(tt.price) as price, sum(tt.weight) as weight 
+					from ( select pp1.cid, date(pp1.when) as day, oo1.club, price * qnty as price, WEIght*qnty as weigHt 
+						   from yrb_purchase pp1,yrb_book bb1, yrb_offer oo1 
+						   where bb1.title=oo1.title and bb1.year = oo1.year and oo1.club = pp1.club and oo1.title=pp1.title and oo1.year = pp1.year) as tt 
+					group by tt.cid, tt.club, tt.day) as kk ) as qq 
+		where qq.price >=50 ) as ff 
+		
+		
+WHERE ff.price >= all(  select r1.price 
+						from (  select r.cid as cid, r.day, sum(r.price) as price, sum(r.weight) as weight 
+								from (  select pr1.cid, date(pr1.when) as day, or1.club, price * qnty as price, WEIght*qnty as weigHt 
+										from yrb_purchase pr1 , yrb_book br1, yrb_offer or1 where br1.title = or1.title and br1.year = or1.year and or1.club = pr1.club and or1.title=pr1.title and or1.year = pr1.year) as r 
+										group by r.cid, r.club, r.day ) as r1 
+						where r1.cid=ff.cid)
+ORDER BY cid;
+

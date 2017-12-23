@@ -1,0 +1,11 @@
+/*  Which club or clubs have the most members?  Show the club(s) and the number*/
+
+
+SELECT c.club club, count(*) as count 
+FROM yrb_club c, yrb_member m  
+WHERE c.club =m.club
+GROUP BY c.club
+HAVING count(*) >= all( select count(*)   
+						from yrb_club c2, yrb_member m2
+						where c2.club =m2.club
+						group by c2.club);

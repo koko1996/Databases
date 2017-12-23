@@ -1,0 +1,8 @@
+/*  For each customer, find the total cost he or she has paid for books in one category. You don't need to consider qnty for this query, just can assume that qnty for every purchase is 1
+	Show the customers's cid and name, the category and the cost */
+	
+
+SELECT c.cid, c.name, b.cat, sum(price) as cost 
+FROM yrb_customer c, yrb_purchase p , yrb_book b, yrb_offer o  
+WHERE c.cid = p.cid and o.club = p.club and o.title=p.title and o.year = p.year  and b.title=o.title and b.year = o.year 
+GROUP BY c.cid , c.name , b.cat;

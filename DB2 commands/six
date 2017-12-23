@@ -1,0 +1,13 @@
+/*  For each customer, show the category he or she spent more on the books of that category than on books of any other category?
+	Show customer name, the category and the cost*/
+	
+	
+SELECT r.name, r.cat , r.price as cost 
+FROM  (select c.name NAME,c.cid CID, b.cat CAT, sum(o.price) PRICE 
+	   from yrb_customer c, yrb_book b, yrb_offer o, yrb_purchase p 
+	   where c.cid = p.cid  and b.title=o.title and b.year = o.year and o.club = p.club and o.title=p.title and o.year = p.year 
+	   group by c.name , c.cid, b.cat) AS R 
+WHERE r.price >= ALL (select sum(o1.price) price 
+					  from yrb_customer c1, yrb_book b1, yrb_offer o1, yrb_purchase p1 
+					  where c1.cid=R.cid and  c1.cid = p1.cid  and b1.title=o1.title and b1.year = o1.year and o1.club = p1.club and o1.title=p1.title and o1.year = p1.year 
+					  group by c1.name , b1.cat);

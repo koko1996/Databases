@@ -1,0 +1,11 @@
+/*  Select distinct customers (by name) who didn't purchase books from all the club(s) he or she belongs to.
+	Show the name of the customer. */
+	
+	
+SELECT distinct c.name 
+FROM yrb_customer c 
+WHERE c.cid in ( select m.cid 
+				 from yrb_member m 
+				 where m.club not in (select m1.club 
+									  from yrb_purchase p1, yrb_member m1 
+									  where m.cid=m1.cid and m1.cid =p1.cid and m1.club = p1.club ));

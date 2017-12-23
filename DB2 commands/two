@@ -1,0 +1,6 @@
+/*  Which pairs of customers purchased at least one book in common? List distinct pairs of customers (by name) */
+
+
+SELECT distinct c.name, c1.name 
+FROM yrb_customer c, yrb_purchase p , yrb_customer c1, yrb_purchase p1
+WHERE p.cid =c.cid and p1.cid =c1.cid and c.cid < c1.cid and p.title = p1.title and p.year= p1.year ;

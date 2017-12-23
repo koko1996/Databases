@@ -1,0 +1,13 @@
+/* Suppose all books shipped to the customer in purchases made on the same time (when) are shipped as one package. Remember, that customers are billed for the books and the postage.
+   For each customer, how much do they spend on each package? If the weight of one package is X grams, the entry just higher than (or equal to) X is found in the shipping table and the associated shipping price is the postage for this package.
+   Show the customer's cid, the day of the package and the cost, order by cid*/
+   
+   
+SELECT t.cid as cid, DATE(t.when) as Day, t.price + ( select min(s.cost) 
+													  from yrb_shipping s 
+													  where s.weight>=t.weight ) as cost 
+FROM ( select temp.cid, temp.when, sum(temp.price) as price, sum(temp.weigth) as weight 
+	   from ( select p1.cid, p1.when, price * qnty as price, weight*qnty as weigth 
+			  from yrb_purchase p1,yrb_book b1, yrb_offer o1 
+			  where b1.title=o1.title and b1.year = o1.year and o1.club = p1.club and o1.title=p1.title and o1.year = p1.year) as temp 
+		group by temp.cid, temp.when order by temp.cid) as t;
